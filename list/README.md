@@ -131,7 +131,7 @@ It should, of course, be implemented :)
 * `cbegin()`
 * `cend()`
 
-### `operator=`
+### operator=
 
 * `List& operator=(const List& other)`
 
