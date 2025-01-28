@@ -1,4 +1,4 @@
-# String
+# String RU
 
 В этой задаче вам нужно реализовать класс динамически расширяющейся строки. 
 Проблема стековых и выделяемых в куче строк заключается в том, что они имеют фиксированный размер 
@@ -92,3 +92,117 @@
 проверка эффективности реализации (что значит эффективно описано выше), 
 проверка корректности работы с памятью (утечки памяти, обращения к памяти 
 не принадлежащей процессу будут приводить к провалу)
+
+# ENG
+# String
+
+In this task, you need to implement a dynamically growing string class.  
+The problem with stack-allocated and heap-allocated strings is that they have a fixed size  
+and cannot automatically expand when needed (unlike `str` in Python, for example).  
+Additionally, when allocating memory dynamically, manual tracking of potential memory leaks  
+is required, adding complexity to the development process.
+
+These problems can be avoided using C++ OOP features. In particular, encapsulation  
+allows implementing methods for adding elements, making the string automatically expand,  
+creating the illusion of an unlimited container.  
+Furthermore, resource management mechanisms ensure timely allocation and deallocation of memory.
+
+This naturally leads to a distinction between the **size** of a string and its **capacity**.  
+C++ allows maintaining arrays with a fixed capacity while the actual size  
+(number of added elements) may be smaller.  
+*Why not always keep these values equal?* — Because it's inefficient.  
+For example, if we add elements one by one, memory reallocation will occur each time,  
+along with copying all previous elements into the new buffer.  
+It is easy to see that the total number of copies will depend quadratically  
+on the number of added elements.  
+It turns out that if we increase the capacity **by a constant factor**  
+when the array overflows, the number of operations performed on the array  
+will grow **linearly** with the number of added elements  
+([source](https://en.wikipedia.org/wiki/Dynamic_array#Geometric_expansion_and_amortized_cost)).  
+Your solution will be tested for correctness of this scheme with a **growth factor of 2**.  
+For example, if the actual size evolves as:  
+`0 -> 1 -> 2 -> 3 -> 4 -> 5 -> ...`  
+then the capacity should evolve as:  
+`0 -> 1 -> 2 -> 4 -> 4 -> 8 -> ...`.
+
+## A Word of Advice
+
+This is the first task where the class interface is not provided.  
+Don't worry! It is described below, and examples of its usage are available in the tests.
+
+The course instructors understand that this task is quite labor-intensive,  
+so they wish you good luck.  
+
+**Don't leave this task for the last moment! It will take more than one evening to complete. :(**
+
+## Implementation Details
+
+You need to implement the `String` class, a simplified version of `std::string`.  
+The class must support the following functionality:
+
+* **Default constructor** — creates an empty string; no memory is allocated.
+* **Constructor taking `size` and `character`** (in this order) —  
+  creates a string of length `size` filled with the character `character`.
+* **Constructor from `const char*`**  
+  (to determine the length of a C-style string, use `strlen`).
+* **Rule of Three**:
+    1. Copy constructor.
+    2. Copy assignment operator.
+    3. Destructor.
+* **Method `Clear()`** — sets the size to `0`, but does *not* deallocate memory.
+* **Method `PushBack(character)`** — adds the character `character` to the end of the string.
+* **Method `PopBack()`** — removes the last character.  
+  If the string is empty, it does nothing (unlike `std::string`, where this is UB).
+* **Method `Resize(new_size)`** — changes the size to `new_size`.  
+  If the capacity is insufficient, a new buffer with capacity `new_size` is allocated.
+* **Method `Resize(new_size, character)`** — same as `Resize(new_size)`,  
+  but if `new_size > size`, the missing elements are filled with `character`.
+* **Method `Reserve(new_cap)`** — changes capacity to `max(new_cap, current_capacity)`.  
+  (If `new_cap <= current_capacity`, no action is taken.) The size remains unchanged.
+* **Method `ShrinkToFit()`** — reduces `capacity` to `size` (if `capacity > size`).
+* **Method `Swap(other)`** — swaps contents with another string `other`. Must run in **O(1)**.
+* **Const and non-const index access operator `[]`**.  
+  The non-const version must allow modification (`a[1] = 'x'`).
+* **Methods `Front()` and `Back()`** — access the first and last character (both const and non-const versions).
+* **Method `Empty()`** — returns `true` if the string is empty (`size == 0`).
+* **Method `Size()`** — returns the current size.
+* **Method `Capacity()`** — returns the current capacity.
+* **Method `Data()`** — returns a pointer to the beginning of the internal character array.
+* **Comparison operators (`<`, `>`, `<=`, `>=`, `==`, `!=`)**  
+  defining **lexicographical order**.
+* **Operators `+` and `+=` for string concatenation**.  
+  Example: `"ab" + "oba" = "aboba"`.  
+  The operation `s += t` **must run in O(|t|)**!  
+  Otherwise, the test servers might overheat.
+* **Multiplication operator for repeating a string**.  
+  Takes a string `str` and a number `n` (in this order) and returns a string of the form:  
+  `str + ... + str` (`n` times).  
+  Time complexity must be **O(result length)**.  
+  **Multiplying a number by a string must cause a compilation error!**  
+  (*Algorithmic riddle: does this remind you of a well-known algorithm?*)
+* **Stream input and output operators**.
+* **Method `std::vector<String> Split(const String& delim = " ")`**  
+  — equivalent to Python’s `split()`.
+* **Method `String Join(const std::vector<String>& strings)`**  
+  — equivalent to Python’s `join()`.
+
+## Notes
+
+1. The solution must consist of **two files**:  
+   - `string.hpp` containing class declarations.  
+   - `string.cpp` containing method definitions.
+
+2. **You may not use the standard C++ library**,  
+   except for `std::vector`, which is allowed **only for `Split` and `Join`**.  
+   If you need any utility classes or functions, **implement them yourself**.
+
+3. The testing system requires **strict compliance**  
+   with the provided function signatures and naming conventions.  
+   If your implementation is incomplete or the interface differs,  
+   you will receive a **compilation error**.  
+   (No custom names like `MyString`, `__string_`, `push_back`, or `superSolver3000`.)
+
+4. The tests include checks for:
+   - **Functionality** (methods must work as specified).
+   - **Efficiency** (as explained above).
+   - **Memory safety** (memory leaks or invalid accesses **will fail the tests**).
