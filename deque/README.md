@@ -63,8 +63,7 @@
 - Тип T не обязан иметь конструктор копирования чтобы храниться в вашем деке.
 - Разрешено пользоваться стандартными контейнерами std::vector и std::array. Другими стандартными контейнерами пользоваться нельзя.
 
-  # END
-# Deque
+# ENG
 
 In this task, you need to enhance your deque to support move semantics and allocators.
 
