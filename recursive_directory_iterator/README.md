@@ -1,0 +1,3 @@
+# Recursive directory iterator
+
+В этой задаче вам предстоит написать свою упрощенную версию [`std::recursive_directory_iterator`](https://en.cppreference.com/w/cpp/filesystem/recursive_directory_iterator) с помощью системных вызовов stat / lstat.
