@@ -1,4 +1,4 @@
-# Deque
+# Deque RU
 
 В данной задаче вам нужно допилить ваш дек чтобы он поддерживал move-семантику и аллокаторы
 
@@ -62,3 +62,69 @@
 - Тип T не обязан иметь конструктора по умолчанию чтобы храниться в вашем деке. При этом конструктор Deque(size_t count) может не компилироваться
 - Тип T не обязан иметь конструктор копирования чтобы храниться в вашем деке.
 - Разрешено пользоваться стандартными контейнерами std::vector и std::array. Другими стандартными контейнерами пользоваться нельзя.
+
+  # END
+# Deque
+
+In this task, you need to enhance your deque to support move semantics and allocators.
+
+## What Needs to Be Implemented
+
+You must implement the `Deque<T, Allocator>` class with the following methods:
+
+- **Constructors**
+  - `Deque()` - default
+  - `Deque(const Allocator&)`
+  - `Deque(const Deque&)` - copy constructor
+  - `Deque(size_t count, const Allocator& alloc = Allocator())` - creates a deque with `count` elements
+  - `Deque(size_t count, const T& value, const Allocator& alloc = Allocator())` - creates a deque with `count` elements, initializing all values with `value`
+  - `Deque(Deque&& other)`
+  - `Deque(std::initializer_list<T> init, const Allocator& alloc = Allocator())`
+- **Destructor**
+- `operator=(const Deque& other)` - copy assignment operator
+- `operator=(Deque&& other)` - move assignment operator
+- `size_t size()` - returns the current size of the deque
+- `bool empty()` - returns `true` if the deque is empty
+- **Element Access** (should work in guaranteed O(1)):
+  - `operator[]` (no bounds checking)
+  - `at()` - with bounds checking, throws `std::out_of_range`
+- **Modification Methods** (should work in amortized O(1)):
+  - `push_back`
+  - `emplace_back`
+  - `pop_back` (no bounds checking)
+  - `push_front`
+  - `emplace_front`
+  - `pop_front` (no bounds checking)
+
+Your deque must also support working with iterators. For this, you need to implement the following:
+
+- **Internal Type `iterator`** (lowercase). This type must support:
+  - Increment, decrement
+  - Addition with an integer
+  - Subtraction of an integer
+  - Comparisons: `<`, `>`, `<=`, `>=`, `==`, `!=`
+  - Subtraction of two iterators
+  - Dereference (`operator*`) - returns `T&`
+  - `operator->` - returns `T*`
+  - Various `using` aliases: `value_type`, `pointer`, `iterator_category`, `reference`
+- **Internal Type `const_iterator`**. The difference from `iterator` is that it doesn't allow modifying the underlying element. Implicit conversion from non-const to const iterator is allowed. Conversion in the opposite direction is not.
+- **Internal Type `reverse_iterator`** (can use `std::reverse_iterator`)
+- **Methods for Accessing Iterators**:
+  - `begin`, `cbegin` - return an iterator (or const iterator) to the first element of the deque
+  - `end`, `cend` - return an iterator (or const iterator) to "the element past the last one"
+  - `rbegin`, `rend`, `crbegin`, `crend` - reverse iterators to corresponding elements
+- `insert(iterator, const T&)` - inserts an element at the iterator position. All elements to the right are shifted one position right. Works in O(n)
+- `emplace(iterator, T&&)`
+- `erase(iterator)` - removes the element at the iterator position. All elements to the right are shifted one position left. Works in O(n)
+
+## Implementation Requirements
+
+- `const_iterator` should not be a copy-paste of `iterator`. Remember template parameters (e.g., `bool IsConst`).
+- Operations `push_back`, `push_front`, `pop_back`, `pop_front`, `emplace_back`, and `emplace_front` should not invalidate references or pointers to other elements of the deque.
+- Operations `pop_back` and `pop_front` should not invalidate iterators to other elements of the deque.
+- If the container itself is constant, the methods `begin` and `end` must return constant iterators.
+- Dereferencing `end` or `cend` is undefined behavior (UB). However, decrementing from `end` (or `cend`) should yield an iterator to the last element. Subtracting integers from `end` (or `cend`) should yield valid iterators to corresponding deque elements.
+- Your deque must provide strong exception safety guarantees. This means that if an exception occurs in the constructor or assignment operator of type `T` during the execution of any deque method, the deque should return to the state it was in before the method started, and the exception should propagate to the caller.
+- Type `T` does not need to have a default constructor to be stored in your deque. In this case, the constructor `Deque(size_t count)` may fail to compile.
+- Type `T` does not need to have a copy constructor to be stored in your deque.
+- You are allowed to use the standard containers `std::vector` and `std::array`. Other standard containers are not allowed.
